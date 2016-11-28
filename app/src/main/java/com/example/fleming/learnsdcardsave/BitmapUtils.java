@@ -38,7 +38,12 @@ public class BitmapUtils {
      * @return
      */
     public static Bitmap bytes2Bitmap(byte[] data) {
-        return data.length != 0 ? BitmapFactory.decodeByteArray(data, 0, data.length) : null;
+        //Options 只保存图片尺寸大小，不保存图片到内存
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = false;//true表示禁止为bitmap分配内存,false则允许
+        //缩放的比例，缩放是很难按准备的比例进行缩放的，其值表明缩放的倍数，SDK中建议其值是2的指数值,值越大会导致图片不清晰
+        options.inSampleSize = 2;
+        return data.length != 0 ? BitmapFactory.decodeByteArray(data, 0, data.length, options) : null;
     }
 
     /**
