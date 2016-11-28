@@ -130,7 +130,7 @@ public class SDCardSaveFragment extends Fragment {
             case R.id.bt_read:
                 String fileSavePath = SDCardHelper.getSDCardPath() + File.separator + DIRECTORY;
                 byte[] bytes = SDCardHelper.loadFileFromSDCard(fileSavePath + File.separator + FILENAME);
-                Bitmap bitmap = BitmapUtil.bytes2Bitmap(bytes);
+                Bitmap bitmap = BitmapUtils.bytes2Bitmap(bytes);
                 ivImage.setImageBitmap(bitmap);
                 break;
         }

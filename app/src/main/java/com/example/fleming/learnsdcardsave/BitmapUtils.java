@@ -15,11 +15,11 @@ import android.graphics.drawable.Drawable;
 import java.io.ByteArrayOutputStream;
 
 /**
- * BitmapUtil
+ * BitmapUtils
  * Created by Fleming on 2016/11/24.
  */
 
-public class BitmapUtil {
+public class BitmapUtils {
 
     /**
      * 将bitmap转换成byte[]
