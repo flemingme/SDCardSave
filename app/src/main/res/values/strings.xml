@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LearnSDCardSave</string>
+    <string name="app_name">SDCardSave</string>
     <string name="download">下载网络图片</string>
     <string name="sdcard_photo">从SDCard中显示该图片</string>
     <string name="download_status">下载状态</string>

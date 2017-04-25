@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/LearnSDCardSave.iml" filepath="$PROJECT_DIR$/LearnSDCardSave.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SDCardSave.iml" filepath="$PROJECT_DIR$/SDCardSave.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

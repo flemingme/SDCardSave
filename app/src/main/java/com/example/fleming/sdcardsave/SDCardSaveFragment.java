@@ -1,5 +1,6 @@
-package com.example.fleming.learnsdcardsave;
+package com.example.fleming.sdcardsave;
 
+import android.Manifest;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.io.File;
 
@@ -43,12 +45,11 @@ public class SDCardSaveFragment extends Fragment {
     ImageView ivImage;
     private static final String IMAGE_URL = "https://dn-coding-net-production-static.qbox.me/b8713bab-1567-49ab-9c9f-18e4e7dbaf3b.png";
     private static final String DIRECTORY = "image";
-    private static final String FILENAME  = "coding.png";
-    private static final int BEGIN        = 0;
-    private static final int LOADING      = 1;
-    private static final int COMPLETE     = 2;
-    private static final int ERROR        = -1;
-    private int maxProgress;
+    private static final String FILENAME = "coding.png";
+    private static final int BEGIN = 0;
+    private static final int LOADING = 1;
+    private static final int COMPLETE = 2;
+    private static final int ERROR = -1;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -57,7 +58,7 @@ public class SDCardSaveFragment extends Fragment {
                 super.handleMessage(msg);
                 switch (msg.what) {
                     case BEGIN:
-                        maxProgress = (int) msg.obj;
+                        int maxProgress = (int) msg.obj;
                         Log.d(TAG, "max file size: " + maxProgress);
                         npb.setMax(maxProgress);
                         break;
@@ -89,24 +90,42 @@ public class SDCardSaveFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.sdcard_save_fragment, container, false);
         ButterKnife.bind(this, v);
-        long sdCardSize = SDCardHelper.getSDCardSize();
-        long sdCardFreeSize = SDCardHelper.getSDCardFreeSize();
-        Log.i(TAG, "sdcard size: " + sdCardSize + ", free size: " + sdCardFreeSize);
+        init();
         return v;
+    }
+
+    private void init() {
+        RxPermissions rxPermissions = new RxPermissions(getActivity());
+        rxPermissions
+                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(granted -> {
+                    if (granted) {
+                        Log.i(TAG, "授权成功");
+                    } else {
+                        Log.i(TAG, "授权失败");
+                    }
+                });
     }
 
     @OnClick({R.id.bt_download, R.id.bt_read})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.bt_download:
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        DownLoader loader = new DownLoader();
-                        loader.download(IMAGE_URL, new DownLoader.OnDownloadListener() {
+                downloadImg();
+                break;
+            case R.id.bt_read:
+                loadImgFromSdCard();
+                break;
+        }
+    }
+
+    private void downloadImg() {
+        new Thread(() ->
+                DownLoader.with()
+                        .download(IMAGE_URL, new DownLoader.OnDownloadListener() {
                             @Override
-                            public void maxProgress(int filesize) {
-                                sendMsg(BEGIN, filesize);
+                            public void maxProgress(int fileSize) {
+                                sendMsg(BEGIN, fileSize);
                             }
 
                             @Override
@@ -123,17 +142,8 @@ public class SDCardSaveFragment extends Fragment {
                             public void onError(String error) {
                                 sendMsg(ERROR, error);
                             }
-                        });
-                    }
-                }).start();
-                break;
-            case R.id.bt_read:
-                String fileSavePath = SDCardHelper.getSDCardPath() + File.separator + DIRECTORY;
-                byte[] bytes = SDCardHelper.loadFileFromSDCard(fileSavePath + File.separator + FILENAME);
-                Bitmap bitmap = BitmapUtils.bytes2Bitmap(bytes);
-                ivImage.setImageBitmap(bitmap);
-                break;
-        }
+                        })
+        ).start();
     }
 
     private void sendMsg(int what, Object data) {
@@ -141,5 +151,12 @@ public class SDCardSaveFragment extends Fragment {
         message.what = what;
         message.obj = data;
         mHandler.sendMessage(message);
+    }
+
+    private void loadImgFromSdCard() {
+        String fileSavePath = SDCardHelper.getSDCardPath() + File.separator + DIRECTORY;
+        byte[] bytes = SDCardHelper.loadFileFromSDCard(fileSavePath + File.separator + FILENAME);
+        Bitmap bitmap = BitmapUtils.bytes2Bitmap(bytes);
+        ivImage.setImageBitmap(bitmap);
     }
 }

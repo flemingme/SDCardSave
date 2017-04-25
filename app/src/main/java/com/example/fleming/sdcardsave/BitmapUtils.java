@@ -1,4 +1,4 @@
-package com.example.fleming.learnsdcardsave;
+package com.example.fleming.sdcardsave;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

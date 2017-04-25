@@ -1,4 +1,4 @@
-package com.example.fleming.learnsdcardsave;
+package com.example.fleming.sdcardsave;
 
 import android.os.Environment;
 import android.os.StatFs;
@@ -9,7 +9,6 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -85,8 +84,6 @@ public class SDCardHelper {
                 bos.write(data, 0, data.length);
                 bos.flush();
                 return true;
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -123,8 +120,6 @@ public class SDCardHelper {
                         baos.flush();
                     }
                     return baos.toByteArray();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {

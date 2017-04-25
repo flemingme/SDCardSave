@@ -1,16 +1,15 @@
-package com.example.fleming.learnsdcardsave;
+package com.example.fleming.sdcardsave;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -24,6 +23,18 @@ public class DownLoader {
     private static final int READ_TIMEOUT = 10 * 1000;
     private static final int CONNECT_TIMEOUT = 15 * 1000;
     private static final String METHOD_GET = "GET";
+    private static DownLoader sLoader;
+
+    public static DownLoader with() {
+        if (sLoader == null) {
+            synchronized (DownLoader.class) {
+                if (sLoader == null) {
+                    sLoader = new DownLoader();
+                }
+            }
+        }
+        return sLoader;
+    }
 
     public void download(String urlPath, @NonNull OnDownloadListener listener) {
         InputStream is = null;
@@ -65,12 +76,10 @@ public class DownLoader {
                 } while (true);
                 listener.complete(baos.toByteArray());
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (is != null && baos != null && bis != null) {
+            if (is != null && baos != null) {
                 try {
                     baos.close();
                     bis.close();
@@ -93,14 +102,11 @@ public class DownLoader {
             conn.setDoInput(true);
             conn.connect();
             int response = conn.getResponseCode();
-            Log.i(TAG, "downloadText: " + response);
+            Log.i(TAG, "ResponseCode: " + response);
             if (response == HttpURLConnection.HTTP_OK) {
                 is = conn.getInputStream();
-                String result = readIt(is);
-                return result;
+                return readIt(is);
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -116,31 +122,32 @@ public class DownLoader {
     }
 
     private String readIt(InputStream is) {
-        int len = 500;
-        Reader reader = null;
-        reader = new InputStreamReader(is);
-        char[] cbuf = new char[len];
+        BufferedReader bf = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line;
         try {
-            reader.read(cbuf);
-            return new String(cbuf);
+            while ((line = bf.readLine()) != null) {
+                sb.append(line);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            try {
+                bf.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        return null;
+        return sb.toString();
     }
 
     public interface OnDownloadListener {
-        void maxProgress(int filesize);
+        void maxProgress(int fileSize);
+
         void loadProgress(int progress);
+
         void complete(byte[] data);
+
         void onError(String error);
     }
 

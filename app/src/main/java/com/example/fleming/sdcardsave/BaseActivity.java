@@ -1,4 +1,4 @@
-package com.example.fleming.learnsdcardsave;
+package com.example.fleming.sdcardsave;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
