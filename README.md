@@ -1,7 +1,5 @@
 # SDCardSave
 
-首先动态申请权限<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
 将文件保存到SDCard中
 ```java
     public static boolean saveFile2SDCard(byte[] data, String dir, String fileName) {
@@ -70,4 +68,10 @@
         return null;
     }
 ```
+
+注意要动态申请权限
+```xml
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+```
+
 <img src="art/sdcard_save.gif" width=40% />
