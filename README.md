@@ -1,5 +1,6 @@
 # SDCardSave
-try to download an image to SDCard, and load it from SDCard, then show it on the ImageView
+
+首先动态申请权限<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 将文件保存到SDCard中
 ```java
